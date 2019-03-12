@@ -1,0 +1,40 @@
+{% extends 'layout/1col.html.twig' %}
+
+{% block content %}
+
+
+
+    <div>
+        <a href='/teacher'> Register as a TEACHER</a>
+    </div>
+        <a href="/student">Register as a STUDENT</a>
+    </div>
+
+    <div> If you are already a member, please <a href='/login'>log in </a></div>
+
+
+
+{% endblock %}
+
+
+
+{#<nav>#}
+    {#<div class="nav nav-tabs" id="nav-tab" role="tablist">#}
+        {#<a href="/tea class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" role="tab"#}
+        {#aria-controls="nav-home" aria-selected="true" >Teacher</a>#}
+        {#<a href="/student" class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" role="tab"#}
+           {#aria-controls="nav-profile" aria-selected="false" >Student</a>#}
+    {#</div>#}
+{#</nav>#}
+
+{#<div class="tab-content" id="nav-tabContent">#}
+    {#<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">#}
+
+        {#{% include 'auth/teacher-register.html.twig' %}#}
+
+        {#<div> If you are already a member, please <a href='/login'>log in </a></div>#}
+
+    {#</div>#}
+    {#<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">#}
+        {#{% include 'auth/student-register.html.twig' %}#}
+    {#</div>#}

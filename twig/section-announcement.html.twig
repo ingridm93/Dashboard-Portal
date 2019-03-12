@@ -1,0 +1,38 @@
+{% extends 'layout/2col-left.html.twig' %}
+
+{% block content %}
+
+    <h2>
+        Hello, {{ user.firstName }} {{ user.lastName }}
+    </h2>
+
+    <h3>Announcements:</h3>
+
+
+    <h6>Section: {{ section.id }}
+    </h6>
+
+
+    {{ section.teacher.firstName }} {{ section.teacher.lastName }}
+
+    <ul class="list-group list-group-flush">
+
+    {% for announcement in section.announcements %}
+
+            <li class="list-group-item">{{ announcement.announcement }} at {{ announcement.time|date('d-m-Y H:i:s') }}</li>
+    {% endfor %}
+    </ul>
+
+
+    {% if user.role === 'teacher' %}
+
+        <form action="/addcourse" method="POST">
+
+
+
+        </form>
+
+
+    {% endif %}
+
+{% endblock %}

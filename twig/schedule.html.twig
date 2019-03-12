@@ -1,0 +1,58 @@
+{% extends 'layout/2col-left.html.twig' %}
+{% block stylesheets %}
+    <link href="/stylesheets/style.css" rel="stylesheet">{% endblock %}
+
+
+
+
+{% block content %}
+    <div class="schedule-container">
+
+        <div class="time-column">
+            <h4>Time</h4>
+
+        </div>
+
+        {% for number, texts in schedule %}
+
+            <div class="day-column">
+
+
+                <h4>{{ number }}</h4>
+                {% for text in texts %}
+                    <a href="/student/section/timetable?{{ text.query }}">
+
+                        <div class="slots" style="height: {{ text.height }}px; margin-top: {{ text.marginTop }}px ">
+
+                            <h6>{{ text.course }}</h6>
+                            {{ text.start }} - {{ text.end }}
+                        </div>
+                    </a>
+                {% endfor %}
+
+            </div>
+        {% endfor %}
+
+    </div>
+
+    <script>
+        function timeLoop() {
+
+            var halfHours = ["00", "30"];
+            for (var i = 8; i <= 22; i++) {
+                for (var j = 0; j < 2; j++) {
+
+                    var time = i + ":" + halfHours[j];
+
+                    var $timeSlots = $('<div class="slots" style="height: 20px">' + time + '</div>');
+
+                    $(".time-column").append($timeSlots);
+                }
+            }
+        }
+
+        timeLoop();
+    </script>
+
+
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link href="/stylesheets/style.css" rel="stylesheet">{% endblock %}
+
+
+{% block title %}{% block subtitle %}{% endblock %}{% endblock %}
+
+{% block header %}
+    <nav class="navbar fixed-top navbar-top">
+        <a class="navbar-brand" href="#">LOGO</a>
+        <span class="navbar-text text-white">{{ firstName }} {{ lastName }}</span>
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Action
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Separated link</a>
+            </div>
+        </div>
+    </nav>
+
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="row col-left">
+        {% block sidebar %}
+
+            <nav class="col-sm-3 col-md-2 col-3 d-none d-sm-block sidebar sb">
+
+                <ul class="nav nav-pills flex-column mb-5">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/dashboard">DASHBOARD<span class="sr-only">(current)</span></a>
+                    </li>
+
+                </ul>
+
+                <ul class="nav nav-pills flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/addcourse">Add Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/section/list">Enrolled Courses</a>
+                    </li>
+
+                    <li>
+                        <a class="nav-link" href="/calendar">Calendar</a>
+                    </li>
+
+                    <li>
+                        <a class="nav-link" href="/schedule">Schedule</a>
+                    </li>
+
+                    {% if role == 'admin' %}
+                    <li>
+                        <a class="nav-link" href="/admin/search/courses">Manage Courses</a>
+                    </li>
+                    {% endif %}
+
+                    <li>
+                        <a class="nav-link" href="/logout">LOGOUT</a>
+                    </li>
+                </ul>
+            </nav>
+
+        {% endblock %}
+
+
+        <main role="main" class="col-sm-9 ml-sm-auto col-md-10 col-9 main">
+            <div class="content">
+                {% include 'layout/flash-messages.html.twig' %}
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+{% endblock %}
+

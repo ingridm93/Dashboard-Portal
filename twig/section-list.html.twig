@@ -1,0 +1,14 @@
+{% extends 'layout/2col-left.html.twig' %}
+
+{% block content %}
+    {% for section in sections %}
+        <ul>
+            <a href="/section/{{ section.id }}"><li>Course ID: {{ section.course.id }}<br/>
+                    Course:{{ section.course.courseName }}{{ section.course.courseCode }}{{ section.course.duration }}1 - {{ section.course.session }}<br/>
+                    Section ID: {{ section.id }}
+                </li>
+            </a>
+
+        </ul>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'layout/2col-left.html.twig' %}
+
+{% block content %}
+
+    <table class="table">
+        <thead>
+        <th/>
+        {% for dayLabel in dayLabels %}
+            <th>{{ dayLabel }}</th>
+        {% endfor %}
+        </thead>
+
+        <tbody>
+        {% for weeks in arr %}
+            <tr>
+                <th scope="row"></th>
+                {% for date in weeks %}
+
+                    {% for type, day in date %}
+
+                        {% if type =='blurred' %}
+
+                            <td class="table-active">{{ day.date|date('d') }}</td>
+
+                        {% else %}
+
+                            <td>{{ day.date|date('d') }}</td>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+    <script>
+
+        var td = $(".td")
+
+
+    </script>
+
+{% endblock %}

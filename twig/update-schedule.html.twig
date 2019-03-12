@@ -1,0 +1,42 @@
+{% extends 'layout/2col-left.html.twig' %}
+{% block stylesheets %}
+    <link href="/stylesheets/style.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div>
+
+        {{ course }} Section: {{ sectionId }}
+        <ul>
+            {% if role == 'teacher' %}
+                {% for time in timetable %}
+
+                    <li>{{ time.day }} From: {{ time.timeStart|date('H:i') }} To: {{ time.timeEnd|date('H:i') }}</li>
+                    <a href="/section/edit/timetable?{{ query }}&timeslotId={{ time.id }}">
+                        <button type="submit" class="btn btn-primary my-1 delete-timeslot">Edit</button>
+                    </a>
+
+                    <form method="POST" action="/section/delete/timeslot?{{ query }}&timeslotId={{ time.id }}">
+                        <button type="submit" class="btn btn-primary my-1 delete-timeslot">Delete</button>
+                    </form>
+
+                {% endfor %}
+            {% elseif role == 'student' %}
+
+                {% for time in timetable %}
+
+                    <li>{{ time.day }} From: {{ time.timeStart|date('H:i') }} To: {{ time.timeEnd|date('H:i') }}</li>
+
+                {% endfor %}
+                <form method="POST" action="/student/section/delete?{{ query }}">
+                    <input name="sectionId" type="hidden" class="form-control"
+                           value={{ sectionId }}>
+                    <button type="submit" class="btn btn-primary my-1 delete-timeslot">Delete</button>
+
+                </form>
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}
+
+

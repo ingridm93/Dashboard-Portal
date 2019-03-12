@@ -1,0 +1,4 @@
+section_announcements:
+  path: /section/{id}
+  defaults:
+    _controller: App\Controller\SectionController::viewSectionAnnouncements

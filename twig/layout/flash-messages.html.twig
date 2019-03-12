@@ -1,0 +1,12 @@
+{% for label, messages in flashes() %}
+
+    {% for message in  getFlashMessage(label) %}
+
+        <div class="alert alert-{{ label }}">
+            {{ message }}
+        </div>
+
+    {% endfor %}
+
+
+{% endfor %}

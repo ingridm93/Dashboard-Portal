@@ -1,0 +1,40 @@
+admin_test:
+  path: /test
+  defaults:
+    _controller: App\Controller\Admin\CourseController::test
+
+search_courses:
+  path: /search/courses
+  defaults:
+    _controller: App\Controller\AdminCourseController::searchCourses
+
+course_sections:
+  path: /course/sections
+  defaults:
+    _controller: App\Controller\AdminCourseController::listCourseSections
+
+edit_sections:
+  path: /course/sections/edit
+  defaults:
+    _controller: App\Controller\AdminCourseController::editSections
+
+add_students:
+  path: /section/add/students
+  defaults:
+    _controller: App\Controller\AdminCourseController::addStudents
+
+delete_section:
+  path: /section/delete
+  defaults:
+    _controller: App\Controller\AdminCourseController::deleteSection
+
+delete_student:
+  path: /section/detele/student
+  defaults:
+    _controller: App\Controller\AdminCourseController::deleteStudent
+
+update_section_teacher:
+  path: /section/update/teacher
+  defaults:
+    _controller: App\Controller\AdminCourseController::updateSectionTeacher
+

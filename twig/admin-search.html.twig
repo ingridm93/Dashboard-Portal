@@ -1,0 +1,143 @@
+{% extends 'layout/2col-left.html.twig' %}
+
+{% block stylesheets %}
+    <link href="/stylesheets/style.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+
+    <form action="/admin/course/sections" method="GET">
+        <div class="row">
+
+            <div class="col-4 mb-3">
+                <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Course</label>
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="courseName">
+                    <option selected></option>
+                    {% for course in courses %}
+                        <option value="{{ course.name }}">{{ course.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-4 mb-3">
+                <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Course Year</label>
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="courseLevel">
+                    <option selected></option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+
+            <div class="col-4 mb-3">
+                <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Course Code</label>
+                <input type="text" name="courseCode" class="form-control" placeholder="Enter Course Code">
+            </div>
+
+            <div class="col-4 mb-3">
+                <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Duration</label>
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="duration">
+                    <option selected></option>
+                    <option value="H">H</option>
+                    <option value="Y">Y</option>
+                </select>
+            </div>
+
+            <div class="col-4 mb-3">
+                <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Session</label>
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="session">
+                    <option selected></option>
+                    <option value="F">F</option>
+                    <option value="S">S</option>
+                    <option value="Y">Y</option>
+                </select>
+            </div>
+
+            <div class="col-4 mb-3">
+                <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Status</label>
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="status">
+                    <option selected></option>
+                    <option value="Online">Online</option>
+                    <option value="Offline">Offline</option>
+
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary my-1">Submit</button>
+        </div>
+    </form>
+
+    <div>
+
+    {% if params %}
+        {% for course in params.courseList %}
+            <div class="mt-4 mb-4">
+                <div class="section-table-title">
+                    <h3>{{ course.courseName }}{{ course.courseCode }}{{ course.duration }}1 - {{ course.session }}</h3>
+                    <form action="/admin/course/sections/edit" class="d-inline-block">
+                        <input name="courseId" type="hidden" class="form-control"
+                               value={{ course.id }}>
+                        <input name="course" type="hidden" class="form-control"
+                               value={{ course.courseName }}{{ course.courseCode }}{{ course.duration }}1-{{ course.session }}>
+                        <input name="courseName" type="hidden" class="form-control"
+                               value={{ course.courseName }}>
+                        <button type="submit" class="btn btn-primary my-1 section-edit">
+                            Edit Course
+                        </button>
+                    </form>
+                </div>
+
+                {% for section in course.sections %}
+                    <table class="table p-2">
+                        <thead class="table-success">
+                        <th>Section ID</th>
+                        <th>Teacher</th>
+                        <th>Time</th>
+                        </thead>
+                        <tbody class="table-success">
+                        <tr>
+                            <td>
+                                {{ section.id }}
+                            </td>
+                            <td>
+                                    {{ section.teacher.firstName }} {{ section.teacher.lastName }}
+                            </td>
+                            <td>
+                                {% for slot in section.timetable %}
+                                    <li>{{ slot.day }}: {{ slot.timeStart|date("H:i") }}
+                                        - {{ slot.timeEnd|date("H:i") }}</li>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {% if params.courseList %}
+
+            <div class="pagination">
+                <nav aria-label="...">
+                    <ul class="pagination">
+                        <li class="page-item disabled">
+                            <span class="page-link">Previous</span>
+                        </li>
+                        {% for page in params.pages %}
+                            <li class="page-item"><a class="page-link"
+                                                     href="?{{ params.params }}&page={{ page }}">{{ page }}</a></li>
+                        {% endfor %}
+                        <li class="page-item">
+                            <a class="page-link">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            </div>
+
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

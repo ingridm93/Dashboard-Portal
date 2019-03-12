@@ -1,0 +1,137 @@
+{% extends 'layout/2col-left.html.twig' %}
+
+{% block stylesheets %}
+    <link href="/stylesheets/style.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <h3>{{ courseInfo.course }}</h3>
+
+    {% for section in sections %}
+
+        <table class="table p-2">
+            <thead class="table-success">
+            <th>Section ID</th>
+            <th>Time</th>
+            <th>Teacher</th>
+            <th>
+                <form action="/admin/section/delete" method="POST" class="text-right">
+                    <input name="sectionId" type="hidden" class="form-control"
+                           value={{ section[0].id }}>
+
+                    <button type="submit" class="btn btn-primary my-1 section-edit">
+                        Delete Section
+                    </button>
+                </form>
+            </th>
+            </thead>
+            <tbody class="table-success">
+            <tr>
+                <td>
+                    {{ section.id }}
+                </td>
+                <td>
+                    {% for slot in section.timetable %}
+                        <li>{{ slot.day }}: {{ slot.timeStart|date("H:i") }} - {{ slot.timeEnd|date("H:i") }}</li>
+                    {% endfor %}
+                </td>
+                <td>
+                    {{ section.teacher.firstName }} {{ section.teacher.lastName }}
+                </td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <form action="/admin/section/update/teacher?{{ query }}" method="POST" class="text-left">
+
+            <div class="mb-3 row">
+                <div class="col-10 mb-6 form-group">
+                    <label>Available Teachers</label>
+                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="teacherId">
+                        <option selected></option>
+                        {% for teacher in teachers %}
+                            <option value="{{ teacher.id }}">{{ teacher.firstName }} {{ teacher.lastName }}</option>
+                        {% endfor %}
+                    </select>
+                    <input name="sectionId" type="hidden" class="form-control"
+                           value={{ section.id }}>
+                </div>
+                <div class="col-2 mb-6 form-group">
+                    <button type="submit" class="btn btn-primary my-1 float-right">
+                        Update Teacher
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="mb-3 row">
+
+            <div class="mb-3 col-12">
+                <h6>Students</h6>
+                {% if section.students|length > 0 %}
+                    <form action="/admin/section/detele/student?{{ query }}" method="POST" class="text-left">
+
+                        <ul>
+                            {% for student in section.students %}
+                                <li class="row mb-3">
+                                    <div class="col-2 inline">
+                                        {{ student.firstName }} {{ student.lastName }}
+                                        <input name="studentId" type="hidden" class="form-control"
+                                               value={{ student.id }}>
+                                        <input name="sectionId" type="hidden" class="form-control"
+                                               value={{ section.id }}>
+                                        <input name="courseId" type="hidden" class="form-control"
+                                               value={{ courseInfo.courseId }}>
+
+                                    </div>
+
+                                    <div class="col-2 inline">
+                                        <button type="submit"
+                                                class="btn btn-primary btn-sm my-1 section-edit float-left">
+                                            -
+                                        </button>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </form>
+
+                {% else %}
+                    <div>No Students Available</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <form action=" /admin/section/add/students?{{ query }}" method="POST" class="text-left">
+            <div class="mb-3 row">
+                <div class="col-10 mb-6 form-group">
+                    <label>Example multiple select</label>
+                    <select multiple class="form-control" name="student-id[]">
+                        <option selected></option>
+                        {% for data in sectionData %}
+                            {% if data.section.id == section.id %}
+                                {% for student in data.notEnrolledStudents %}
+                                    <option value="{{ student.id }}">{{ student.firstName }} {{ student.lastName }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <input name="sectionId" type="hidden" class="form-control"
+                           value={{ section.id }}>
+                    <input name="courseId" type="hidden" class="form-control"
+                           value={{ courseInfo.courseId }}>
+                </div>
+                <div class="col-2 mb-6 form-group">
+
+                    <button type="submit" class="btn btn-primary my-1 section-edit float-right">
+                        Add Students
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    {% endfor %}
+
+{% endblock %}

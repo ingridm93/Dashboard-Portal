@@ -1,0 +1,11 @@
+student_section_delete:
+  path: /student/section/delete
+  defaults:
+    _controller: App\Controller\ScheduleController::studentSectionDelete
+
+section_announcements:
+  path: /section/{id}
+  defaults:
+    _controller: App\Controller\SectionController::viewSectionAnnouncements
+
+

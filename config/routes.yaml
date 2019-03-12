@@ -1,0 +1,102 @@
+
+#unauthenticated:
+register:
+  path: /
+  defaults:
+    _controller: App\Controller\UserController::register
+    _role: ['unauthenticated']
+
+teacher_register:
+  path: /teacher
+  defaults:
+    _controller: App\Controller\UserController::renderTeacherForm
+    _role: ['unauthenticated']
+
+student_register:
+  path: /student
+  defaults:
+    _controller: App\Controller\UserController::renderStudentForm
+    _role: ['unauthenticated']
+
+admin_register:
+  path: /admin
+  defaults:
+    _controller: App\Controller\UserController::renderAdminForm
+    _role: ['unauthenticated']
+
+login:
+  path: /login
+  defaults:
+    _controller: App\Controller\UserController::login
+    _role: ['unauthenticated']
+
+logout:
+  path: /logout
+  defaults:
+    _controller: App\Controller\UserController::logout
+
+#role resources:
+
+admin:
+  prefix: /admin/
+  resource: './routes/admin.yaml'
+  defaults:
+    _role: ['admin']
+
+teacher:
+  prefix: /teacher/
+  resource: './routes/teacher.yaml'
+  defaults:
+    _role: ['teacher']
+
+student:
+  prefix: /student/
+  resource: './routes/student.yaml'
+  defaults:
+    _role: ['student']
+
+
+#accessible by all users:
+
+dashboard:
+  path: /dashboard
+  defaults:
+    _controller: App\Controller\DashboardController::dashboard
+
+add_course:
+  path: /addcourse
+  defaults:
+    _controller: App\Controller\DashboardController::handleCourse
+
+calendar:
+  path: /calendar
+  defaults:
+    _controller: App\Controller\CalendarController::calendar
+
+schedule:
+  path: /schedule
+  defaults:
+    _controller: App\Controller\ScheduleController::schedule
+
+section_timetable:
+  path: /section/timetable
+  defaults:
+    _controller: App\Controller\ScheduleController::sectionTimetable
+
+section_timeslot:
+  path: /section/edit/timetable
+  defaults:
+    _controller: App\Controller\ScheduleController::editSectionTimeslots
+
+delete_timeslot:
+  path: /section/delete/timeslot
+  defaults:
+    _controller: App\Controller\ScheduleController::deleteTimeslot
+
+#accessible by some users:
+
+user_sections:
+  path: /section/list
+  defaults:
+    _controller: App\Controller\SectionController::loadUserSections
+    _role: ['teacher', 'student']

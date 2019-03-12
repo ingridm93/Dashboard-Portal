@@ -1,0 +1,46 @@
+{% extends 'layout/2col-left.html.twig' %}
+
+{% block content %}
+    <div>
+
+
+        <ul>
+            {% for course in courseList %}
+
+                {{ course.id }}{{ course.courseName }}{{ course.courseCode }}{{ course.duration }}1 - {{ course.session }} - TITLE OF
+                COURSE
+                <li>
+
+                    <ul>
+                        {% for section in course.sections %}
+                            <li>
+                                {{ section.id }}
+                                <form action="/addcourse" method="POST">
+
+                                    <input name="sectionId" type="hidden" class="form-control"
+                                           value={{ section.id }}>
+                                    <input name="courseId" type="hidden" class="form-control"
+                                           value={{ course.id }}>
+                                    <button type="submit" name="submit" class="btn btn-primary my-1 course-submit">
+                                        Submit
+                                    </button>
+                                </form>
+                                <ul>
+                                    {% for timetable in section.timetable %}
+                                        <li>
+                                            <h6>{{ timetable.day }}</h6>
+                                            Start: {{ timetable.timeStart|date('H:i') }}<br/>
+                                            End: {{ timetable.timeEnd|date('H:i') }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+
+
+    </div>
+{% endblock %}

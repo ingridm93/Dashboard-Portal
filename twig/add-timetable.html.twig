@@ -1,0 +1,241 @@
+{% extends 'layout/2col-left.html.twig' %}
+
+{% block content %}
+
+    <form action="/addcourse" method="POST" id="add-course">
+        <div class="row mb-3">
+
+            <div class="col-9 mb-6">
+                <h6 class="my-1 mr-2" for="inlineFormCustomSelectPref">Course</h6>
+                <select class="custom-select my-1 mr-sm-2 select-course" id="inlineFormCustomSelectPref"
+                        name="sectionId">
+                    <option selected></option>
+                    {% for id, section in sections %}
+
+                        {% if section %}
+
+                        <option value={{ id }}>{{ section }}</option>
+
+                    {% else %}
+                    <option>No courses available for scheduling.</option>
+                    {% endif %}
+
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="timetable">
+
+            <div class="row">
+                <div class="col-3 days-wrapper">
+                    <h6 class="my-1 mr-2" for="inlineFormCustomSelectPref">Day(s) of Week</h6>
+                </div>
+
+                <div class="col-2 time-start-wrapper">
+                    <h6 class="my-1 mr-2" for="inlineFormCustomSelectPref">Time Start</h6>
+
+                </div>
+
+                <div class="col-2 time-end-wrapper">
+                    <h6 class="my-1 mr-2" for="inlineFormCustomSelectPref">Time End</h6>
+
+                </div>
+
+                <div class="col-2">
+                    <button type="button" class="btn btn-secondary add-btn">+</button>
+                </div>
+            </div>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary my-1 course-submit">Submit</button>
+    </form>
+    <script>
+        $(function () {
+            var buttons = $(".add-btn");
+
+            buttons.on('click', function () {
+
+                validateCourseValue(function () {
+                    validateTimetableValues(function () {
+                        addNewTimeRow();
+                    });
+                })
+
+            });
+
+            var submit = $(".course-submit");
+
+            submit.on('click', function (e) {
+                e.preventDefault();
+                var select = $("select");
+
+                if (select.length > 1) {
+                    validateCourseValue(function () {
+                        validateTimetableValues(function () {
+
+                            $("form").trigger("submit");
+                        })
+                    });
+                }
+            });
+
+
+            var courseSelect = $(".select-course");
+
+            courseSelect.on('change', function () {
+
+                validateCourseValue(function () {
+                    addNewTimeRow();
+                })
+            });
+        });
+
+        function validateCourseValue(callback) {
+
+            var courseSelect = $(".select-course")
+
+            if (!courseSelect.val()) {
+                $(".timetable-container").remove();
+
+                return;
+            } else {
+
+                callback();
+            }
+        }
+
+        function validateTimetableValues(callback) {
+
+            var timetableSelect = $(".timetable select");
+            var valid = true;
+
+            timetableSelect.each(function () {
+                if (!$(this).val()) {
+                    return valid = false;
+                }
+            });
+
+            if (valid) {
+                callback();
+            }
+        }
+
+
+        function eliminateDays (div) {
+
+            var $day = $(".select-day");
+
+            $day.each(function () {
+
+                var enteredValue = $(this).val();
+
+                div.find("select.select-day option").each(function () {
+
+
+                    if (enteredValue === $(this).val()) {
+
+                        $(this).remove();
+                        return div;
+                    }
+                })
+            });
+        }
+
+        function disableEndSelect(div) {
+
+            if (div.find("select.time-start option").val() === "") {
+                div.find("select.time-end").prop("disabled", true);
+            }
+        }
+
+        function removeSelectFields(div) {
+
+            var rmButton = div.find(".rm-btn");
+
+            rmButton.on('click', function () {
+                var itemToClear = $(this).parent().parent();
+                itemToClear.remove();
+            })
+        }
+
+
+        function addNewTimeRow() {
+
+            var div = $('<div class="row timetable-container"><div class="col-3 days-wrapper"><select class="custom-select my-1 mr-sm-2 select-day timetable-select input-group" id="inlineFormCustomSelectPref" name="weekdays[]"><label></label><option selected></option>{% for day in weekdays %}<option value = {{ day }}>{{ day }}</option>{% endfor %}</select></div><div class="col-2 time-start-wrapper"><select class="custom-select my-1 mr-sm-2 time time-start timetable-select input-group" id="inlineFormCustomSelectPref" name="timeStart[]"><option selected></option></select></div><div class="col-2 time-end-wrapper"><select class="custom-select my-1 mr-sm-2 time time-end timetable-select input-group" id="inlineFormCustomSelectPref" name="timeEnd[]"><option selected></option></select></div><div class="col-2 my-1 mr-sm-2 rm-btn"><button type="button" class="btn btn-secondary rm-btn">-</button></div></div>');
+
+            eliminateDays(div);
+
+            populateSelectTime(div);
+
+            $(".timetable").append(div);
+
+            disableEndSelect(div);
+
+            removeSelectFields(div);
+        }
+
+
+        function populateSelectTime(div) {
+
+            timeLoop(div);
+
+            div.find("select.time-start").on('change', function () {
+
+                div.find("select.time-end").empty().prop("disabled", true);
+
+                var elements = $("select.time-start option");
+                var selected = $(this).val();
+
+                elements.each(function () {
+
+                    if ($(this).val() > selected && selected !== "") {
+
+                        div.find("select.time-end").prop("disabled", false);
+
+                        fillSelect(div.find("select.time-end"), null, $(this));
+                    }
+                })
+            })
+        }
+
+        function timeLoop(div) {
+
+            var halfHours = ["00", "30"];
+            var startTime;
+
+            for (var i = 8; i <= 22; i++) {
+                for (var j = 0; j < 2; j++) {
+
+                    var time = i + ":" + halfHours[j];
+
+
+                    if (i < 10) {
+                        var value = "0" + i + halfHours[j] + "00";
+                        startTime = $('<option value="' + value + '">' + time + '</option>');
+
+                        fillSelect(div.find("select.time-start"), startTime, null);
+
+                    } else {
+                        startTime = $('<option value="' + i + halfHours[j] + '00">' + time + '</option>')
+
+                        fillSelect(div.find("select.time-start"), startTime, null);
+                    }
+                }
+            }
+
+        }
+
+        function fillSelect(element, startTime, endTime) {
+
+            if (startTime) {
+                $(element).append(startTime);
+            }
+            if (endTime) {
+                endTime.clone().appendTo(element);
+            }
+        }
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'layout/2col-left.html.twig' %}
+
+{% block content %}
+
+
+    <form action="/addcourse" method="GET">
+        <div class="row">
+
+            <div class="col-12 mb-3">
+                <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Course</label>
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="course">
+                    <option selected></option>
+                    <option selected></option>
+                    <option value="BIO">Biology</option>
+                    <option value="CHM">Chemistry</option>
+                    <option value="PHY">Physics</option>
+                    <option value="MTH">Math</option>
+                    <option value="ENG">English</option>
+                    <option value="DEU">German</option>
+                    <option value="ART">Art</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary my-1">Submit</button>
+        </div>
+
+    </form>
+
+{% endblock %}

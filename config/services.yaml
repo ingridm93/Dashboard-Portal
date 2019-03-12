@@ -1,0 +1,285 @@
+parameters:
+  'conn':
+    'driver': 'pdo_mysql'
+    'user': 'root'
+    'password': ''
+    'dbname': 'notebook'
+  database_host: "localhost"
+  database_name: "notebook"
+  database_user: "root"
+  database_password: "test1234"
+  schedule.timeInterval: 30
+  schedule.margin: 20
+  course.list: ['BIO', 'CHM', 'PHY', 'MTH', 'ENG', 'DEU', 'ART']
+  weekdays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+  url: ['mysql://root:test1234@localhost/notebook']
+
+services:
+
+  entity_manager:
+    factory: ['\Doctrine\ORM\EntityManager', create]
+    arguments: ['%conn%', '@doctrine_config']
+
+  event_dispatcher:
+    class: Symfony\Component\EventDispatcher\EventDispatcher
+
+  default_entity_listener:
+    class: Doctrine\ORM\Mapping\EntityListeners
+
+  firewall_listener:
+    class: App\Event\FirewallEventListener
+    arguments:
+      $firewall: '@firewall'
+      $flashMessage: '@flash_message'
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+  firewall:
+    class: App\Service\Firewall
+    arguments:
+      $flashMessage: '@flash_message'
+      $userProvider: '@user_provider'
+
+  doctrine_config:
+    factory: ['Doctrine\ORM\Tools\Setup', createAnnotationMetadataConfiguration]
+    arguments: [['/Users/zou/dev/PHP/labnotebook-php/src/Entity'], true, null, null, false]
+
+  console_runner:
+    class: Doctrine\ORM\Tools\Console\ConsoleRunner
+    factory: ['Doctrine\ORM\Tools\Console\ConsoleRunner', createHelperSet]
+    arguments: ['@entity_manager']
+
+  doctrine_fixture:
+    class: Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle
+
+  flash_message_extension:
+    class: App\TwigExtension\FlashMessageExtension
+    tags:
+      - { name: twig.extension }
+    arguments:
+      $flashMessage: '@flash_message'
+
+  global_user_extension:
+    class: App\TwigExtension\GlobalUserTwigExtension
+    tags:
+      - { name: twig.extension }
+    arguments:
+      $userProvider: '@user_provider'
+
+  helper_functions:
+    class: App\Service\HelperFunctions
+
+  user_manager:
+    class: App\Service\UserManager
+    arguments:
+      $em: '@entity_manager'
+
+  user_entity:
+    class: App\Entity\User
+    arguments:
+      $userRepository: '@user_repository'
+
+  course_manager:
+    class: \App\Service\CourseManager
+    arguments:
+      $em: '@entity_manager'
+
+  admin_course_manager:
+    class: App\Service\AdminCourseManager
+    arguments:
+      $helper: '@helper_functions'
+
+  flash_message:
+    class: App\Service\FlashMessage
+
+  App\Controller\UserController:
+    class: App\Controller\UserController
+    arguments:
+      $router: '@router'
+      $userProvider: '@user_provider'
+      $userRepository: '@user_repository'
+      $userManager: '@user_manager'
+      $flashMessage': '@flash_message'
+      $skillRepository: '@skill_repository'
+
+
+  App\Controller\ScheduleController:
+    class: App\Controller\ScheduleController
+    arguments:
+      $userManager: '@user_manager'
+      $courseManager: '@course_manager'
+      $teacher: '@teacher_manager'
+      $userProvider: '@user_provider'
+      $timeInterval: '%schedule.timeInterval%'
+      $marginTop: '%schedule.margin%'
+      $weekdays: '%weekdays%'
+      $flashMEssage: '@flash_message'
+      $router: '@router'
+      $timetableRepository: '@timetable_repository'
+      $userRepository: '@user_repository'
+      $sectionRepository: '@section_repository'
+
+
+  App\Controller\CalendarController:
+    class: App\Controller\CalendarController
+
+
+  App\Controller\DashboardController:
+    class: App\Controller\DashboardController
+    arguments:
+      $courseManager: '@course_manager'
+      $router: '@router'
+      $userProvider: '@user_provider'
+      $admin: '@admin_manager'
+      $teacher: '@teacher_manager'
+      $student: '@student_manager'
+      $flashMessage: '@flash_message'
+      $weekdays: '%weekdays%'
+      $courseRepository: '@course_repository'
+      $skillRepository: '@skill_repository'
+      $userRepository: '@user_repository'
+      $notificationRepository: '@notification_repository'
+
+  App\Controller\AdminCourseController:
+      class: App\Controller\AdminCourseController
+      arguments:
+        $courseManager: '@course_manager'
+        $userManager: '@user_manager'
+        $courses: '%course.list%'
+        $flashMessage: '@flash_message'
+        $router: '@router'
+        $courseRepository: '@course_repository'
+        $sectionRepository: '@section_repository'
+        $userRepository: '@user_repository'
+        $skillRepository: '@skill_repository'
+        $timetableRepository: '@timetable_repository'
+
+  App\Controller\SectionController:
+    class: App\Controller\SectionController
+    arguments:
+      $router: '@router'
+      $userProvider: '@user_provider'
+      $sectionRepository: '@section_repository'
+      $announcementRepository: '@announcement_repository'
+      $userRepository: '@user_repository'
+
+  admin_manager:
+    class: App\Service\RoleManager\AdminManager
+    arguments:
+      $courseManager: '@course_manager'
+      $userProvider: '@user_provider'
+      $flashMessage: '@flash_message'
+      $courseRepository: '@course_repository'
+      $skillRepository: '@skill_repository'
+      $userRepository: '@user_repository'
+      $timetableRepository: '@timetable_repository'
+      $sectionRepository: '@section_repository'
+
+  teacher_manager:
+    class: App\Service\RoleManager\TeacherManager
+    arguments:
+      $courseManager: '@course_manager'
+      $userProvider: '@user_provider'
+      $flashMessage: '@flash_message'
+      $courseRepository: '@course_repository'
+      $skillRepository: '@skill_repository'
+      $userRepository: '@user_repository'
+      $timetableRepository: '@timetable_repository'
+      $sectionRepository: '@section_repository'
+
+
+  student_manager:
+    class: App\Service\RoleManager\StudentManager
+    arguments:
+      $courseManager: '@course_manager'
+      $userProvider: '@user_provider'
+      $flashMessage: '@flash_message'
+      $courseRepository: '@course_repository'
+      $skillRepository: '@skill_repository'
+      $userRepository: '@user_repository'
+      $timetableRepository: '@timetable_repository'
+      $sectionRepository: '@section_repository'
+
+
+  user_provider:
+    class: App\Service\UserProvider
+    arguments:
+      $em: '@entity_manager'
+
+  user_repository:
+    class: App\Repository\UserRepository
+    factory: ["@entity_manager", getRepository]
+    arguments:
+        - 'App\Entity\User'
+
+  calendar:
+    class: App\Service\Calendar
+
+  course_repository:
+    class: App\Repository\CourseRepository
+    factory: ["@entity_manager", getRepository]
+    arguments:
+        - 'App\Entity\Course'
+
+  section_repository:
+    class: App\Repository\SectionRepository
+    factory: ["@entity_manager", getRepository]
+    arguments:
+        - 'App\Entity\Section'
+
+  skill_repository:
+    class: App\Repository\Skill
+    factory: ["@entity_manager", getRepository]
+    arguments:
+        - 'App\Entity\Skill'
+
+  timetable_repository:
+    class: App\Repository\Timetable
+    factory: ["@entity_manager", getRepository]
+    arguments:
+        - 'App\Entity\Timetable'
+
+  notification_repository:
+    class: App\Repository\Notification
+    factory: ["@entity_manager", getRepository]
+    arguments:
+        - 'App\Entity\Notification'
+
+  app_notification_repository:
+    class: App\Repository\AppNotification
+    factory: ["@entity_manager", getRepository]
+    arguments:
+        - 'App\Entity\AppNotification'
+
+  email_notification_repository:
+    class: App\Repository\EmailNotification
+    factory: ["@entity_manager", getRepository]
+    arguments:
+        - 'App\Entity\EmailNotification'
+
+  announcement_repository:
+    class: App\Repository\SectionAnnouncementNotification
+    factory: ["@entity_manager", getRepository]
+    arguments:
+        - 'App\Entity\SectionAnnouncement'
+
+  doctrine_event_listener:
+    class: App\EntityListener\DoctrineEventListener
+    arguments:
+      $userProvider: '@user_provider'
+    tags:
+        - { name: doctrine.orm.entity_listener, event: prePersist }
+        - { name: doctrine.orm.entity_listener, event: preUpdate }
+
+  setup:
+    class: App\Setup
+    arguments:
+      $em: '@entity_manager'
+
+  user_fixtures:
+    class: App\AppFixtures\UserFixtures
+    arguments:
+      $em: '@entity_manager'
+      $user: '@user_entity'
+
+
